@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cybercom.cyberseminar.microservices.orders.client.product.IProductClient;
@@ -31,20 +32,17 @@ class OrderBO {
     }
 
     Order add(OrderNew orderNew) {
-        Optional<User> optionalUser = userClient.find(orderNew.getUserId());
-        Optional<Product> optionalProduct = productClient.find(orderNew.getProductId());
+        ResponseEntity<User> user = userClient.find(orderNew.getUserId());
+        ResponseEntity<Product> product = productClient.find(orderNew.getProductId());
 
-        if (!optionalUser.isPresent()) {
+        if (!user.hasBody()) {
             throw new RuntimeException("User not exists");
         }
-        if (!optionalProduct.isPresent()) {
+        if (!product.hasBody()) {
             throw new RuntimeException("Product not exists");
         }
 
-        User user = optionalUser.get();
-        Product product = optionalProduct.get();
-
-        Order order = new Order(user, product, orderNew.getQuantity());
+        Order order = new Order(user.getBody(), product.getBody(), orderNew.getQuantity());
 
         orders.add(order);
 
