@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@FeignClient(url = "${client.products.url}",
-             value = "products",
+@FeignClient(value = "products",
              decode404 = true)
 public interface IProductClient {
 
